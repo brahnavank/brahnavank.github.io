@@ -33,7 +33,6 @@
 </head>
 
 <body>
-    <p>Version 1.0.4</p>
     <div id="floatingSuggestion"></div>
     <div id="sidePanel">
         <p>Placeholder for content</p>
@@ -53,12 +52,12 @@
         async function onTextSelect(event) {
             await Word.run(async (context) => {
                 const selection = context.document.getSelection();
-                selection.load('text, boundingRect');
+                selection.load('text');
                 await context.sync();
 
                 if (selection.text) {
                     const suggestion = await fetchSuggestion(selection.text);
-                    const { left, top } = getSelectionPosition(selection);
+                    const { left, top } = await getSelectionPosition(selection);
                     showFloatingSuggestion(left, top, suggestion);
                 } else {
                     hideFloatingSuggestion();
@@ -72,10 +71,17 @@
             return data.title; // Modify this to return relevant data based on selectedText
         }
 
-        function getSelectionPosition(selection) {
-            // Position the suggestion box above the selected text
-            const left = selection.boundingRect.left;
-            const top = selection.boundingRect.top - 50; // Adjust to position above the selection
+        async function getSelectionPosition(selection) {
+            // Use getRange to retrieve the bounding rectangle
+            const range = selection.getRange();
+            range.load('boundingRect');
+            await Word.run(async (context) => {
+                await context.sync();
+            });
+
+            // Calculate position above the selected text
+            const left = range.boundingRect.left;
+            const top = range.boundingRect.top - 50; // Adjust to position above
             return { left, top };
         }
 
