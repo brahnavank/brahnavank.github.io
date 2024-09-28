@@ -8,7 +8,7 @@
 </head>
 
 <body>
-    <p>This add-in will insert the text 'Hello world test!'.</p>
+    <p>Generate text app.</p>
     <button id="helloButton">Generate</button>
 
     <!-- The following image URL tracks diagnostic data for this sample add-in. Please remove the image tag if you reuse this sample in your own code project. -->
@@ -23,6 +23,7 @@
         }
     });
 
+    /*
     function sayHello() {
         return Word.run((context) => {
 
@@ -32,7 +33,7 @@
             // sync the context to run the previous API call, and return.
             return context.sync();
         });
-    }
+    }*/
     
     async function generateText() {
         return Word.run(async (context) => {
