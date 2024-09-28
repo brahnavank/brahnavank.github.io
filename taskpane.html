@@ -33,7 +33,6 @@
 </head>
 
 <body>
-    <p>Version 1.0.3</p>
     <div id="floatingSuggestion"></div>
     <div id="sidePanel">
         <p>Placeholder for content</p>
@@ -58,9 +57,6 @@
 
                 if (selection.text) {
                     const suggestion = await fetchSuggestion(selection.text);
-                    const suggestionBox = document.getElementById('floatingSuggestion');
-                    
-                    // Position the suggestion above the selected text
                     const { left, top } = await getSelectionPosition(selection);
                     showFloatingSuggestion(left, top, suggestion);
                 } else {
