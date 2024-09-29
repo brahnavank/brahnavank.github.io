@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Insert Textbox in Word</title>
+    <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        button {
+            padding: 10px 15px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Insert Textbox</h1>
+    <button id="insert-textbox">Insert Textbox</button>
+    <script>
+        Office.onReady((info) => {
+            if (info.host === Office.HostType.Word) {
+                document.getElementById("insert-textbox").onclick = insertTextbox;
+            }
+        });
+
+        async function insertTextbox() {
+            await Word.run(async (context) => {
+                const xml = `<?xml version="1.0" encoding="UTF-8"?>
+                <pkg:package xmlns:pkg="http://schemas.microsoft.com/office/2006/xmlPackage">
+                    <pkg:part pkg:name="/_rels/.rels" pkg:contentType="application/vnd.openxmlformats-package.relationships+xml" pkg:padding="512">
+                        <pkg:xmlData>
+                            <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+                                <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml" />
+                            </Relationships>
+                        </pkg:xmlData>
+                    </pkg:part>
+                    <pkg:part pkg:name="/word/document.xml" pkg:contentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml">
+                        <pkg:xmlData>
+                            <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+                                <w:body>
+                                    <w:p>
+                                        <w:r>
+                                            <w:pict>
+                                                <v:rect xmlns:v="urn:schemas-microsoft-com:vml" style="position:absolute;width:300pt;height:100pt;v-text-anchor:top" fillcolor="#e6e6e6" textbox-id="textbox1">
+                                                    <v:textbox id="test">
+                                                        <w:txbxContent>
+                                                            <w:p>
+                                                                <w:r>
+                                                                    <w:t>Your Text Goes Here</w:t>
+                                                                </w:r>
+                                                            </w:p>
+                                                        </w:txbxContent>
+                                                    </v:textbox>
+                                                </v:rect>
+                                            </w:pict>
+                                        </w:r>
+                                    </w:p>
+                                </w:body>
+                            </w:document>
+                        </pkg:xmlData>
+                    </pkg:part>
+                </pkg:package>`;
+                
+                const range = context.document.getSelection();
+                await context.sync();
+                range.insertOoxml(xml, 'Start');
+                await context.sync();
+            });
+        }
+    </script>
+</body>
+</html>
