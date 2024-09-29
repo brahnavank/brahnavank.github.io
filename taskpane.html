@@ -80,12 +80,26 @@
                     //showPopup(event.pageX, event.pageY, selection.text.toString());
                     
                     
+//                    const range = selection.getRange();
+//                    range.load('boundingRect');
+//                    await context.sync();
+//
+//                    // Calculate position for the tooltip
+//                    const rect = range.boundingRect;
+                    
+                    
+                    
+                    
                     const range = selection.getRange();
-                    range.load('boundingRect');
+                    range.load('text');
                     await context.sync();
 
-                    // Calculate position for the tooltip
-                    const rect = range.boundingRect;
+                    // Get the bounding rectangle for the selected text
+                    const rect = range.getBoundingRect();
+                    await context.sync();  // Ensure we synchronize after getting the rectangle
+
+                    
+                    
                     showPopup(rect.x + window.scrollX, rect.y + window.scrollY - 40, "Your tooltip text here");
                     
                 }
