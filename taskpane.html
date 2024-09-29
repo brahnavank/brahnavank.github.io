@@ -90,17 +90,29 @@
                     
                     
                     
-                    const range = selection.getRange();
-                    range.load('text');
+//                    const range = selection.getRange();
+//                    range.load('text');
+//                    await context.sync();
+//
+//                    // Get the bounding rectangle for the selected text
+//                    const rect = range.getBoundingRect();
+//                    await context.sync();  // Ensure we synchronize after getting the rectangle
+                    
+                    // Load the bounding rect of the selection
+                    selection.load('boundingRect');
                     await context.sync();
 
-                    // Get the bounding rectangle for the selected text
-                    const rect = range.getBoundingRect();
-                    await context.sync();  // Ensure we synchronize after getting the rectangle
+                    // Check if boundingRect is available
+                    if (selection.boundingRect) {
+                        const rect = selection.boundingRect;
+//                        showTooltip(rect.x + window.scrollX, rect.y + window.scrollY - 40, "Your tooltip text here");
+                        
+                        showPopup(rect.x + window.scrollX, rect.y + window.scrollY - 40, "Your tooltip text here");
+                    }
 
                     
                     
-                    showPopup(rect.x + window.scrollX, rect.y + window.scrollY - 40, "Your tooltip text here");
+                 
                     
                 }
             });
