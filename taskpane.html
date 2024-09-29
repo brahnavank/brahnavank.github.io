@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Rephrase Tool</title>
+    <title>Rephrase Suggestions</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -25,15 +25,6 @@
             margin-bottom: 20px;
         }
 
-        textarea {
-            width: 100%;
-            margin-bottom: 10px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            resize: none;
-        }
-
         button {
             background-color: #0078d4;
             color: white;
@@ -41,10 +32,27 @@
             padding: 10px 15px;
             border-radius: 4px;
             cursor: pointer;
+            margin-top: 10px;
         }
 
         button:hover {
             background-color: #005a9e;
+        }
+
+        .suggestions {
+            margin-top: 20px;
+        }
+
+        .suggestion {
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        .suggestion:hover {
+            background-color: #e9e9e9;
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/office-ui-fabric-js/1.4.1/js/fabric.js"></script>
@@ -52,27 +60,25 @@
 </head>
 <body>
     <div class="container">
-        <h1>Rephrase Tool</h1>
-        <div>
-            <textarea id="inputText" placeholder="Enter text to rephrase..." rows="6"></textarea>
-        </div>
-        <button id="rephraseButton">Rephrase</button>
-        <div>
-            <h3>Rephrased Text:</h3>
-            <textarea id="outputText" placeholder="Rephrased text will appear here..." rows="6" readonly></textarea>
-        </div>
+        <h1>Rephrase Suggestions</h1>
+        <button id="getSuggestionsButton">Get Rephrase Suggestions</button>
+        <div class="suggestions" id="suggestionsContainer"></div>
     </div>
     <script>
-        document.getElementById("rephraseButton").onclick = async function() {
-            const inputText = document.getElementById("inputText").value;
-            if (inputText.trim() === "") {
-                alert("Please enter some text to rephrase.");
-                return;
-            }
+        document.getElementById("getSuggestionsButton").onclick = async function() {
+            await Word.run(async (context) => {
+                const selection = context.document.getSelection();
+                selection.load("text");
+                await context.sync();
 
-            // Call your API to rephrase the text (you'll need to implement this)
-            const rephrasedText = await callRephrasingAPI(inputText);
-            document.getElementById("outputText").value = rephrasedText;
+                if (selection.text.trim() === "") {
+                    alert("Please select some text to rephrase.");
+                    return;
+                }
+
+                const suggestions = await callRephrasingAPI(selection.text);
+                displaySuggestions(suggestions);
+            });
         };
 
         async function callRephrasingAPI(text) {
@@ -95,12 +101,37 @@
                 }
 
                 const data = await response.json();
-//                return data.rephrasedText; // Adjust according to your API response structure
+//                return data.suggestions; // Adjust according to your API response structure
                 return data.title; 
             } catch (error) {
-                console.error("Error during rephrasing:", error);
-                return "Error rephrasing text.";
+                console.error("Error during fetching suggestions:", error);
+                return ["Error fetching suggestions."];
             }
+        }
+
+        function displaySuggestions(suggestions) {
+            const container = document.getElementById("suggestionsContainer");
+            container.innerHTML = ""; // Clear previous suggestions
+
+            suggestions.forEach(suggestion => {
+                const suggestionDiv = document.createElement("div");
+                suggestionDiv.className = "suggestion";
+                suggestionDiv.textContent = suggestion;
+
+                suggestionDiv.onclick = function() {
+                    insertSuggestion(suggestion);
+                };
+
+                container.appendChild(suggestionDiv);
+            });
+        }
+
+        async function insertSuggestion(suggestion) {
+            await Word.run(async (context) => {
+                const selection = context.document.getSelection();
+                selection.insertText(suggestion, Word.InsertLocation.replace);
+                await context.sync();
+            });
         }
     </script>
 </body>
