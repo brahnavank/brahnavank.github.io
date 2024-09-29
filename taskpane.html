@@ -74,7 +74,8 @@
         });
         
         async function onTextSelect(event) {
-            await Word.run(async (context) => {
+            //await Word.run(async (context) => {
+            Word.run(async (context) => {    
                 const selection = context.document.getSelection();
                 selection.load('text');
 //                await context.sync();
