@@ -35,7 +35,17 @@
         
         Office.onReady((info) => {
              console.log("Document ready");
+             sunscribe();
         });
+        
+        
+        
+        function sunscribe() {
+            Office.context.document.addHandlerAsync(Office.EventType.DocumentSelectionChanged, handler);
+        }
+        function handler() {
+            console.log("****** select");
+        }
         
         setInterval(async () => { 
             await Word.run(async (context) => {
