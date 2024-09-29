@@ -25,6 +25,8 @@
 
         async function onSelectionChanged() {
             await Word.run(async (context) => {
+                console.log("Selection changed!");
+
                 const selection = context.document.getSelection();
                 selection.load('text');
 
