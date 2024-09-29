@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Text Selection Popup</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
         .popup {
             position: absolute;
             padding: 10px;
@@ -12,15 +17,18 @@
             color: white;
             border-radius: 5px;
             display: none;
+            z-index: 1000;
         }
     </style>
 </head>
 <body>
     <div id="content">
-        Select or double-click any text in this document to see the popup.
+        Select any text in this document to see the popup.
+        <br><br>
+        This example demonstrates how to show a popup when text is selected.
     </div>
     
-    <div class="popup" id="popup">Test</div>
+    <div class="popup" id="popup"></div>
 
     <script>
         const popup = document.getElementById('popup');
@@ -28,25 +36,61 @@
         document.addEventListener('mouseup', (event) => {
             const selection = window.getSelection();
             if (selection.toString().length > 0) {
-                showPopup(event.clientX, event.clientY);
+                showPopup(event.pageX, event.pageY, selection.toString());
             }
         });
-
-        document.addEventListener('dblclick', (event) => {
-            const selection = window.getSelection();
-            if (selection.toString().length > 0) {
-                showPopup(event.clientX, event.clientY);
-            }
+        
+        
+        Office.onReady((info) => {
+             console.log("Document ready");
         });
+        
+        
+        let lastSelectedText = "";
 
-        function showPopup(x, y) {
+        // Start polling for selection changes
+        setInterval(async () => {
+            await Word.run(async (context) => {
+                const selection = context.document.getSelection();
+                selection.load("text");
+                await context.sync();
+
+                if (selection.text !== lastSelectedText) {
+//                    lastSelectedText = selection.text;
+//                    document.getElementById("outputText").value = lastSelectedText;
+//                    
+//                    // Call API to get suggestions
+//                    const suggestions = await callRephrasingAPI(lastSelectedText);
+//                    //const jsonString = JSON.stringify(suggestions);
+//
+//                    //document.getElementById("suggestedText").value = suggestions[0].word;
+//                    displaySuggestions(suggestions);
+//
+//                    // Optionally, you can call another function here if needed
+//                    console.log("Selection changed:", lastSelectedText);
+//                    
+//                    
+//                    // Create a comment on the selected text
+//                    const comment = selection.insertComment("Your comment here...");
+//                    await context.sync();
+//                    console.log("Comment inserted:", comment);
+                    
+                    showPopup(event.pageX, event.pageY, selection.text.toString());
+                }
+            });
+        }, 1000); // Check every second
+        
+        
+
+        function showPopup(x, y, text) {
+            popup.textContent = text; // Set the text of the popup
             popup.style.left = `${x}px`;
             popup.style.top = `${y}px`;
             popup.style.display = 'block';
         }
 
         document.addEventListener('click', () => {
-            popup.style.display = 'none';
+            popup.style.display = 'none'; // Hide popup on click anywhere else
         });
     </script>
 </body>
