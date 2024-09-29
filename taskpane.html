@@ -1,93 +1,73 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Get Selection Position</title>
+    <title>Insert Textbox in Word</title>
+    <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            padding: 20px;
         }
-
-        .tooltip {
-            position: absolute;
-            padding: 8px;
-            background-color: rgba(0, 0, 0, 0.8);
-            color: white;
-            border-radius: 4px;
-            display: none;
-            z-index: 1000;
+        button {
+            padding: 10px 15px;
+            font-size: 16px;
         }
     </style>
 </head>
 <body>
-    <div id="content">
-        Select any text in this document to see the tooltip.
-        <br><br>
-        This example demonstrates how to get the position of selected text.
-    </div>
-    
-    <div class="tooltip" id="tooltip"></div>
-
-    <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+    <h1>Insert Textbox</h1>
+    <button id="insert-textbox">Insert Textbox</button>
     <script>
-        
         Office.onReady((info) => {
-             console.log("Document ready");
-             sunscribe();
+            if (info.host === Office.HostType.Word) {
+                document.getElementById("insert-textbox").onclick = insertTextbox;
+            }
         });
-        
-        
-        
-        function sunscribe() {
-            Office.context.document.addHandlerAsync(Office.EventType.DocumentSelectionChanged, handler);
-        }
-        function handler() {
-            console.log("****** select");
-        }
-        
-        setInterval(async () => { 
+
+        async function insertTextbox() {
             await Word.run(async (context) => {
-                const selection = context.document.getSelection();
-                selection.load("text"); // Load both text and boundingRect
+                const xml = `<?xml version="1.0" encoding="UTF-8"?>
+                <pkg:package xmlns:pkg="http://schemas.microsoft.com/office/2006/xmlPackage">
+                    <pkg:part pkg:name="/_rels/.rels" pkg:contentType="application/vnd.openxmlformats-package.relationships+xml" pkg:padding="512">
+                        <pkg:xmlData>
+                            <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+                                <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml" />
+                            </Relationships>
+                        </pkg:xmlData>
+                    </pkg:part>
+                    <pkg:part pkg:name="/word/document.xml" pkg:contentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml">
+                        <pkg:xmlData>
+                            <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+                                <w:body>
+                                    <w:p>
+                                        <w:r>
+                                            <w:pict>
+                                                <v:rect xmlns:v="urn:schemas-microsoft-com:vml" style="position:absolute;width:300pt;height:100pt;v-text-anchor:top" fillcolor="#e6e6e6" textbox-id="textbox1">
+                                                    <v:textbox id="test">
+                                                        <w:txbxContent>
+                                                            <w:p>
+                                                                <w:r>
+                                                                    <w:t>Your Text Goes Here</w:t>
+                                                                </w:r>
+                                                            </w:p>
+                                                        </w:txbxContent>
+                                                    </v:textbox>
+                                                </v:rect>
+                                            </w:pict>
+                                        </w:r>
+                                    </w:p>
+                                </w:body>
+                            </w:document>
+                        </pkg:xmlData>
+                    </pkg:part>
+                </pkg:package>`;
+                
+                const range = context.document.getSelection();
                 await context.sync();
-
-                if (selection.text.length > 0) {
-                    //var selection	= document.getSelection(),
-                    var range		= context.document.getRangeAt(0);
-                    var clientRects = range.getClientRects();
-
-                    console.log(clientRects);
-                    console.log(clientRects[0].x);
-                    
-                    
-                    
-                    // Get the bounding rectangle coordinates
-                    const rect = selection.boundingRect;
-                    const x = rect.x + window.scrollX; // Adjust for window scrolling
-                    const y = rect.y + window.scrollY - 40; // Position above the selection
-
-                    showTooltip(x, y, "Your tooltip text here");
-                } else {
-                    hideTooltip();
-                }
+                range.insertOoxml(xml, 'Start');
+                await context.sync();
             });
-        }, 1000); // Check every second
-
-        function showTooltip(x, y, text) {
-            const tooltip = document.getElementById('tooltip');
-            tooltip.textContent = text; // Set the text of the tooltip
-            tooltip.style.left = `${x}px`;
-            tooltip.style.top = `${y}px`;
-            tooltip.style.display = 'block';
-        }
-
-        function hideTooltip() {
-            const tooltip = document.getElementById('tooltip');
-            tooltip.style.display = 'none'; // Hide tooltip
         }
     </script>
 </body>
 </html>
-
