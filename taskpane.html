@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Floating Suggestions</title>
+    <title>Font Menu Popup</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -18,7 +18,7 @@
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
-        .floating-menu {
+        .popup-menu {
             display: none;
             position: absolute;
             background-color: white;
@@ -27,8 +27,9 @@
             border-radius: 4px;
             z-index: 1000;
             padding: 10px;
+            width: 150px;
         }
-        .floating-menu button {
+        .popup-menu button {
             background: none;
             border: none;
             padding: 8px 10px;
@@ -37,73 +38,65 @@
             width: 100%;
             text-align: left;
         }
-        .floating-menu button:hover {
-            background-color: #f0f0f0;
+        .popup-menu button:hover {
+            background-color: #eaeaea;
         }
     </style>
     <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
 </head>
 <body>
     <div class="container">
-        <h1>Floating Suggestions</h1>
-        <div id="floatingMenu" class="floating-menu">
-            <button onclick="insertComment()">Insert Comment</button>
-            <button onclick="getSuggestions()">Get Suggestions</button>
+        <h1>Font Menu Popup</h1>
+        <button id="showMenuButton">Show Font Menu</button>
+        <div id="popupMenu" class="popup-menu">
+            <button onclick="changeFontSize('12px')">Font Size: 12</button>
+            <button onclick="changeFontSize('14px')">Font Size: 14</button>
+            <button onclick="changeFontSize('16px')">Font Size: 16</button>
+            <button onclick="changeFontSize('18px')">Font Size: 18</button>
             <button onclick="closeMenu()">Close</button>
         </div>
     </div>
 
     <script>
-        Office.onReady((info) => {
+        const popupMenu = document.getElementById("popupMenu");
 
-             console.log("Document ready");
-        });
-        let floatingMenu = document.getElementById("floatingMenu");
-
-        // Check for selection and show the floating menu
-        document.addEventListener('mouseup', async function(event) {
+        // Show the popup menu near the button
+        document.getElementById("showMenuButton").onclick = async function(event) {
             await Word.run(async (context) => {
                 const selection = context.document.getSelection();
                 selection.load("text");
                 await context.sync();
 
-                if (selection.text.trim() !== "") {
-                    const rect = selection.getRange().getBoundingClientRect();
-
-                    floatingMenu.style.display = "block";
-                    floatingMenu.style.left = `${rect.x + window.scrollX}px`;
-                    floatingMenu.style.top = `${rect.y + window.scrollY + rect.height}px`; // Position below the selected text
-                } else {
-                    closeMenu(); // Close the menu if no text is selected
+                if (selection.text.trim() === "") {
+                    alert("Please select some text to change the font.");
+                    return;
                 }
+
+                const rect = selection.getRange().getBoundingClientRect();
+
+                popupMenu.style.display = "block";
+                popupMenu.style.left = `${rect.x + window.scrollX}px`;
+                popupMenu.style.top = `${rect.y + window.scrollY + rect.height}px`; // Position below the selected text
             });
-        });
+        };
 
         function closeMenu() {
-            floatingMenu.style.display = "none";
+            popupMenu.style.display = "none";
         }
 
-        async function insertComment() {
+        async function changeFontSize(size) {
             await Word.run(async (context) => {
                 const selection = context.document.getSelection();
-                const userComment = prompt("Enter your comment:");
-                if (userComment) {
-                    selection.insertComment(userComment);
-                    await context.sync();
-                    alert("Comment inserted!");
-                    closeMenu();
-                }
+                selection.font.size = size; // Change the font size
+                await context.sync();
+                alert(`Font size changed to ${size}!`);
+                closeMenu();
             });
-        }
-
-        function getSuggestions() {
-            alert("Getting suggestions..."); // Replace with your logic
-            closeMenu();
         }
 
         // Close menu if clicking outside
         window.onclick = function(event) {
-            if (!floatingMenu.contains(event.target)) {
+            if (!popupMenu.contains(event.target) && event.target.id !== "showMenuButton") {
                 closeMenu();
             }
         };
