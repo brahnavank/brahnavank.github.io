@@ -77,7 +77,13 @@
 //                    await context.sync();
 //                    console.log("Comment inserted:", comment);
                     
-                    showPopup(event.pageX, event.pageY, selection.text.toString());
+                    const range = selection.getRangeAt(0);
+                    const rect = range.getBoundingClientRect();
+                    showPopup(rect.x + window.scrollX, rect.top + window.scrollY - 40, selection.text.toString());
+   
+                    showPopup(rect.x + context.document.scrollX, rect.top + context.document.scrollY - 40, selection.text.toString());
+                    
+                    //showPopup(event.pageX, event.pageY, selection.text.toString());
                 }
             });
         }, 1000); // Check every second
