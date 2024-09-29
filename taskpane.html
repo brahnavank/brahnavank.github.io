@@ -113,7 +113,7 @@
                 const suggestions = await callRephrasingAPI(selection.text);
                 const jsonString = JSON.stringify(suggestions);
 
-                document.getElementById("suggestedText").value = jsonString[0].word;
+                document.getElementById("suggestedText").value = suggestions[0].word;
                 //displaySuggestions(suggestions);
             });
         }
