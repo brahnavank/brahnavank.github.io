@@ -142,7 +142,7 @@
         
         <button id="suggestButton">Suggest</button>
         -->
-         <textarea id="outputText" placeholder="Rephrased text will appear here..." rows="1" readonly></textarea>
+         <textarea type="hidden" id="outputText" placeholder="Rephrased text will appear here..." rows="1" readonly></textarea>
         
         <div class="suggestions" id="suggestionsContainer"></div>
         
@@ -245,7 +245,7 @@
                 await Word.run(async (context) => {
                     const selection = context.document.getSelection();
                     // Insert the suggestion and replace the selected text
-                    selection.insertText(suggestion, Word.InsertLocation.replace);
+                    selection.insertText(suggestion+" ", Word.InsertLocation.replace);
                     await context.sync(); // Synchronize changes
                     console.log("Suggestion inserted:", suggestion);
                 });
