@@ -74,6 +74,9 @@
         });
         
         async function onTextSelect(event) {
+            event.preventDefault(); // Disable default double-click action
+            console.log("**** on click");
+
             await Word.run(async (context) => {
                 const selection = context.document.getSelection();
                 selection.load('text');
