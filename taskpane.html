@@ -83,6 +83,7 @@
 
                 // Display the selected text in the input field
                 document.getElementById("outputText").value = selection.text || 'No text selected';
+                console.info("Selected : "+selection.text);
             }).catch(function(error) {
                 console.error(error);
             });
