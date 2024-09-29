@@ -133,7 +133,7 @@
         <div>
             <textarea id="inputText" placeholder="Enter text to rephrase..." rows="6"></textarea>
         </div>
-        -->
+        
         <button id="selectButton">Suggest x</button>
         <div>
             <h3>Selected Text:</h3>
@@ -141,6 +141,7 @@
         </div>
         
         <button id="suggestButton">Suggest</button>
+        -->
         
         <div class="suggestions" id="suggestionsContainer"></div>
         
@@ -160,20 +161,20 @@
         
         
         Office.onReady((info) => {
-            if (info.host === Office.HostType.Word) {
-                document.addEventListener('mouseup', onTextSelect);
-                document.addEventListener('dblclick', onTextSelect);
-            }
+//            if (info.host === Office.HostType.Word) {
+//                document.addEventListener('mouseup', onTextSelect);
+//                document.addEventListener('dblclick', onTextSelect);
+//            }
+//            
+//            document.addEventListener('mouseup', onTextSelect);
+//            document.addEventListener('dblclick', onTextSelect);
+//            
+//            document.getElementById("suggestButton").onclick = async function() {
+//                await fetchSelectedTextAndSuggest();
+//            };
             
-            document.addEventListener('mouseup', onTextSelect);
-            document.addEventListener('dblclick', onTextSelect);
-            
-            document.getElementById("suggestButton").onclick = async function() {
-                await fetchSelectedTextAndSuggest();
-            };
+             console.log("Document ready");
         });
-        
-        displaySuggestions([{"word" : "test"}, {"word" : "check"}])
         
         
         let lastSelectedText = "";
@@ -201,32 +202,6 @@
                 }
             });
         }, 1000); // Check every second
-        
-     
-        
-        
-        async function fetchSelectedTextAndSuggest() {
-            await Word.run(async (context) => {
-                const selection = context.document.getSelection();
-                selection.load("text");
-                await context.sync();
-
-                if (selection.text.trim() === "") {
-                    alert("Please select some text to rephrase.");
-                    return;
-                }
-
-                // Update the output text area with the selected text
-                //document.getElementById("outputText").value = selection.text;
-
-                // Call API to get suggestions
-                const suggestions = await callRephrasingAPI(selection.text);
-                const jsonString = JSON.stringify(suggestions);
-
-                //document.getElementById("suggestedText").value = suggestions[0].word;
-                displaySuggestions(suggestions);
-            });
-        }
         
         
          async function callRephrasingAPI(text) {
@@ -278,82 +253,6 @@
                 alert("Could not insert suggestion. Please try again.");
             }
         }
-
-
-        
-        async function onTextSelect(event) {
-            event.preventDefault(); // Disable default double-click action
-            console.log("**** on click");
-
-            await Word.run(async (context) => {
-                const selection = context.document.getSelection();
-                selection.load('text');
-                await context.sync();
-                
-                
-                
-                if (selection.text) {
-//                    const suggestion = await fetchSuggestion(selection.text);
-//                    const { left, top } = await getSelectionPosition(selection);
-//                    showFloatingSuggestion(left, top, suggestion);
-                    
-                    document.getElementById("outputText").value = selection.text;
-                    //const rephrasedText[] = await callRephrasingAPI(selection.text);
-//                    document.getElementById("outputText").value = rephrasedText;
-                    //document.getElementById("suggestedText").value = rephrasedText[0].word;
-                    
-                } else {
-                    //hideFloatingSuggestion();
-                }
-            });
-        }
-        
-//        document.getElementById("rephraseButton").onclick = async function() {
-//            const inputText = document.getElementById("inputText").value;
-//            if (inputText.trim() === "") {
-//                alert("Please enter some text to rephrase.");
-//                return;
-//            }
-//
-//            // Call your API to rephrase the text (you'll need to implement this)
-//            const rephrasedText = await callRephrasingAPI(inputText);
-//            document.getElementById("outputText").value = rephrasedText;
-//        };
-
-        async function callRephrasingAPI(text) {
-            try {
-                // Replace this URL with your actual API endpoint
-//                const response = await fetch("https://api.example.com/rephrase", {
-//                    method: "POST",
-//                    headers: {
-//                        "Content-Type": "application/json",
-//                    },
-//                    body: JSON.stringify({ text: text }),
-//                });
-                
-//                const response = await fetch(`https://jsonplaceholder.typicode.com/posts/1`);
-                //https://api.datamuse.com/words?rel_syn=book
-                const response = await fetch(`https://api.datamuse.com/words?rel_syn=`+text);
-                
-//                const data = await response.json();
-//                return data.title; 
-
-                if (!response.ok) {
-                    throw new Error("Network response was not ok");
-                }
-
-                const data = await response.json();
-//                return data.rephrasedText; // Adjust according to your API response structure
-                return data; 
-            } catch (error) {
-                console.error("Error during rephrasing:", error);
-                return "Error rephrasing text.";
-            }
-        }
-        
-        
-        
-
 
     </script>
 </body>
