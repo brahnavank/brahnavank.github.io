@@ -176,7 +176,7 @@
         displaySuggestions([{"word" : "test"}, {"word" : "check"}])
         
         
-         let lastSelectedText = "";
+        let lastSelectedText = "";
 
         // Start polling for selection changes
         setInterval(async () => {
@@ -188,6 +188,13 @@
                 if (selection.text !== lastSelectedText) {
                     lastSelectedText = selection.text;
                     document.getElementById("outputText").value = lastSelectedText;
+                    
+                    // Call API to get suggestions
+                    const suggestions = await callRephrasingAPI(lastSelectedText);
+                    //const jsonString = JSON.stringify(suggestions);
+
+                    //document.getElementById("suggestedText").value = suggestions[0].word;
+                    displaySuggestions(suggestions);
 
                     // Optionally, you can call another function here if needed
                     console.log("Selection changed:", lastSelectedText);
