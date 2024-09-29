@@ -113,8 +113,8 @@
                 const suggestions = await callRephrasingAPI(selection.text);
                 const jsonString = JSON.stringify(suggestions);
 
-                document.getElementById("suggestedText").value = suggestions[0].word;
-                //displaySuggestions(suggestions);
+                //document.getElementById("suggestedText").value = suggestions[0].word;
+                displaySuggestions(suggestions);
             });
         }
         
@@ -159,6 +159,14 @@
                 };
 
                 container.appendChild(suggestionDiv);
+            });
+        }
+        
+        async function insertSuggestion(suggestion) {
+            await Word.run(async (context) => {
+                const selection = context.document.getSelection();
+                selection.insertText(suggestion, Word.InsertLocation.replace);
+                await context.sync();
             });
         }
 
