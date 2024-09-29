@@ -86,11 +86,13 @@
             
             document.addEventListener('mouseup', onTextSelect);
             document.addEventListener('dblclick', onTextSelect);
+            
+            document.getElementById("suggestButton").onclick = async function() {
+                await fetchSelectedTextAndSuggest();
+            };
         });
         
-        document.getElementById("suggestButton").onclick = async function() {
-            await fetchSelectedTextAndSuggest();
-        };
+     
         
         
         async function fetchSelectedTextAndSuggest() {
@@ -105,11 +107,14 @@
                 }
 
                 // Update the output text area with the selected text
-                document.getElementById("outputText").value = selection.text;
+                //document.getElementById("outputText").value = selection.text;
 
                 // Call API to get suggestions
                 const suggestions = await callRephrasingAPI(selection.text);
-                displaySuggestions(suggestions);
+                const jsonString = JSON.stringify(suggestions);
+
+                document.getElementById("outputText").value = jsonString;
+                //displaySuggestions(suggestions);
             });
         }
         
