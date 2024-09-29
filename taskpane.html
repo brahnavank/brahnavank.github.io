@@ -242,12 +242,28 @@
             });
         }
         
+        /*
         async function insertSuggestion(suggestion) {
             await Word.run(async (context) => {
                 const selection = context.document.getSelection();
                 selection.insertText(suggestion, Word.InsertLocation.replace);
                 await context.sync();
             });
+        }*/
+        
+        async function insertSuggestion(suggestion) {
+            try {
+                await Word.run(async (context) => {
+                    const selection = context.document.getSelection();
+                    // Insert the suggestion and replace the selected text
+                    selection.insertText(suggestion, Word.InsertLocation.replace);
+                    await context.sync(); // Synchronize changes
+                    console.log("Suggestion inserted:", suggestion);
+                });
+            } catch (error) {
+                console.error("Error inserting suggestion:", error);
+                alert("Could not insert suggestion. Please try again.");
+            }
         }
 
 
