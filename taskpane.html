@@ -33,8 +33,8 @@
 </head>
 <body>
 
-    <h1>Word Add-in v2</h1>
-    <p>Select text in the document to see the popup menu.</p>
+    <h1>Word Add-in</h1>
+    <p>Double-click a word in the document to see the popup menu.</p>
 
     <div id="popupMenu">
         <ul>
@@ -45,7 +45,7 @@
     </div>
 
     <script>
-        document.addEventListener('mouseup', function(event) {
+        document.addEventListener('dblclick', function(event) {
             const selectedText = window.getSelection().toString();
             const popupMenu = document.getElementById('popupMenu');
 
