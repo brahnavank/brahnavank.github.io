@@ -142,7 +142,7 @@
         
         <button id="suggestButton">Suggest</button>
         -->
-         <textarea type="hidden" id="outputText" placeholder="Rephrased text will appear here..." rows="1" readonly></textarea>
+         <textarea type="hidden" id="outputText" placeholder="hidden..." rows="1" readonly></textarea>
         
         <div class="suggestions" id="suggestionsContainer"></div>
         
@@ -200,6 +200,12 @@
 
                     // Optionally, you can call another function here if needed
                     console.log("Selection changed:", lastSelectedText);
+                    
+                    
+                    // Create a comment on the selected text
+                    const comment = selection.insertComment("Your comment here...");
+                    await context.sync();
+                    console.log("Comment inserted:", comment);
                 }
             });
         }, 1000); // Check every second
