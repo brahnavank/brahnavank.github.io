@@ -32,34 +32,29 @@
 
     <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
     <script>
-        Office.onReady(async (info) => {
-            if (info.host === Office.HostType.Word) {
-                const tooltip = document.getElementById('tooltip');
-
-                document.addEventListener('mouseup', async () => {
-                    await Word.run(async (context) => {
-                        const selection = context.document.getSelection();
-                        selection.load("text, boundingRect"); // Load both text and boundingRect
-                        await context.sync();
-
-                        if (selection.text.length > 0) {
-                            // Get the bounding rectangle coordinates
-                            const rect = selection.boundingRect;
-                            const x = rect.x + window.scrollX; // Adjust for window scrolling
-                            const y = rect.y + window.scrollY - 40; // Position above the selection
-
-                            showTooltip(x, y, "Your tooltip text here");
-                        } else {
-                            hideTooltip();
-                        }
-                    });
-                });
-
-                document.addEventListener('click', () => {
-                    hideTooltip();
-                });
-            }
+        
+        Office.onReady((info) => {
+             console.log("Document ready");
         });
+        
+        setInterval(async () => { 
+            await Word.run(async (context) => {
+                const selection = context.document.getSelection();
+                selection.load("text, boundingRect"); // Load both text and boundingRect
+                await context.sync();
+
+                if (selection.text.length > 0) {
+                    // Get the bounding rectangle coordinates
+                    const rect = selection.boundingRect;
+                    const x = rect.x + window.scrollX; // Adjust for window scrolling
+                    const y = rect.y + window.scrollY - 40; // Position above the selection
+
+                    showTooltip(x, y, "Your tooltip text here");
+                } else {
+                    hideTooltip();
+                }
+            });
+        }, 1000); // Check every second
 
         function showTooltip(x, y, text) {
             const tooltip = document.getElementById('tooltip');
@@ -76,3 +71,4 @@
     </script>
 </body>
 </html>
+
