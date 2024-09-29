@@ -33,7 +33,7 @@
 </head>
 <body>
 
-    <h1>Word Add-in</h1>
+    <h1>Word Add-in v2</h1>
     <p>Select text in the document to see the popup menu.</p>
 
     <div id="popupMenu">
@@ -49,25 +49,29 @@
             const selectedText = window.getSelection().toString();
             const popupMenu = document.getElementById('popupMenu');
 
-            if (selectedText) {
-                popupMenu.style.display = 'block';
-                popupMenu.style.left = event.pageX + 'px';
-                popupMenu.style.top = event.pageY + 'px';
-            } else {
-                popupMenu.style.display = 'none'; // Hide if no text is selected
+            // Hide the menu if no text is selected
+            if (!selectedText) {
+                popupMenu.style.display = 'none';
+                return;
             }
+
+            // Position the menu and display it
+            popupMenu.style.left = `${event.pageX}px`;
+            popupMenu.style.top = `${event.pageY}px`;
+            popupMenu.style.display = 'block';
         });
 
         document.addEventListener('click', function(event) {
             const popupMenu = document.getElementById('popupMenu');
+            // Hide the menu if clicked outside of it
             if (!popupMenu.contains(event.target)) {
-                popupMenu.style.display = 'none'; // Hide menu if clicked outside
+                popupMenu.style.display = 'none';
             }
         });
 
         function selectText(option) {
             console.log(`Selected: ${option}`);
-            // Implement your logic here (e.g., modify the document or provide feedback)
+            // Implement any additional logic here (e.g., modify the document)
             document.getElementById('popupMenu').style.display = 'none'; // Hide the menu after selection
         }
     </script>
