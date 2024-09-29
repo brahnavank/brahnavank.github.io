@@ -67,15 +67,10 @@
     </div>
     <script>
         
-        Office.onReady(async function(info) {
+        Office.onReady(function(info) {
             if (info.host === Office.HostType.Word) {
                 // Register event handler for selection change
-                Word.run(function(context) {
-                    context.document.addHandlerAsync(Office.EventType.SelectionChanged, onSelectionChanged);
-                    return context.sync();
-                }).catch(function(error) {
-                    console.error(error);
-                });
+                Office.context.document.addHandlerAsync(Office.EventType.SelectionChanged, onSelectionChanged);
             }
         });
 
