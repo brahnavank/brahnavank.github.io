@@ -45,7 +45,7 @@
 
                 if (selection.text.length > 0) {
                     //var selection	= document.getSelection(),
-                    var range		= selection.getRangeAt(0);
+                    var range		= context.document.getRangeAt(0);
                     var clientRects = range.getClientRects();
 
                     console.log(clientRects);
