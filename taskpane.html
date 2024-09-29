@@ -40,10 +40,19 @@
         setInterval(async () => { 
             await Word.run(async (context) => {
                 const selection = context.document.getSelection();
-                selection.load("text, boundingRect"); // Load both text and boundingRect
+                selection.load("text"); // Load both text and boundingRect
                 await context.sync();
 
                 if (selection.text.length > 0) {
+                    //var selection	= document.getSelection(),
+                    var range		= selection.getRangeAt(0);
+                    var clientRects = range.getClientRects();
+
+                    console.log(clientRects);
+                    console.log(clientRects[0].x);
+                    
+                    
+                    
                     // Get the bounding rectangle coordinates
                     const rect = selection.boundingRect;
                     const x = rect.x + window.scrollX; // Adjust for window scrolling
