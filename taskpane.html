@@ -23,6 +23,9 @@
     <script>
         Office.onReady(() => {
             if (Office.context.host === Office.HostType.Word) {
+                //PagesContainer
+                //id="PaginatedContentContainerDisplayWrapper"
+                //document.getElementById("PaginatedContentContainerDisplayWrapper")
                 document.getElementById("getCoords").onclick = getSelectedTextCoordinates;
             }
         });
@@ -61,11 +64,25 @@
         }
 
         function showPopup(text, x, y) {
-            const popup = document.getElementById("popup");
+            //const popup = document.getElementById("popup");
+            const popup = document.createElement("div");
             popup.innerText = `Selected Text: "${text}"\nX: ${x}, Y: ${y}`;
             popup.style.left = `${x}px`;
             popup.style.top = `${y}px`;
             popup.style.display = 'block'; // Show the popup
+            
+            
+            
+            // Select the target element
+            const container = document.querySelector(".PaginatedContentContainerDisplayWrapper");
+
+            if (container) {
+                // Append the new div to the container
+                container.appendChild(popup);
+                console.log("Div appended successfully.");
+            } else {
+                console.error("Target container not found.");
+            }
 
             // Hide the popup after a few seconds
 //            setTimeout(() => {
