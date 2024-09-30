@@ -136,7 +136,9 @@
                         //const selection = context.document.getSelection();
                         const selection = context.document.getSelection();
                     
-                        console.log(" ## : "+selection)
+                        console.log(" 1## : "+JSON.stringify(selection))
+                    
+                        console.log(" 2## : "+selection)
                         
                         selection.load('contentRange');
                         await context.sync() 
