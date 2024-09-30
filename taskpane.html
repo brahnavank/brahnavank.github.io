@@ -127,20 +127,29 @@
 
                 // Gets the range of the first comment in the selected content.
                 await Word.run(async (context) => {
-                      const comment: Word.Comment = context.document.getSelection().getComments().getFirstOrNullObject();
-                      comment.load("contentRange");
-                      const range: Word.Range = comment.getRange();
-                      range.load("text");
-                      await context.sync();
+//                      const comment: Word.Comment = context.document.getSelection().getComments().getFirstOrNullObject();
+//                      comment.load("contentRange");
+//                      const range: Word.Range = comment.getRange();
+//                      range.load("text");
+//                      await context.sync();
+                    
+                        //const selection = context.document.getSelection();
+                        const selection = context.document.getSelection();
+                        range.load('contentRange');
+                        await context.sync() 
+                    
+                        const range = selection.getRange();
+                        range.load("text");
+                        await context.sync();
 
-                      if (comment.isNullObject) {
-                        console.warn("No comments in the selection, so no range to get.");
-                        return;
-                      }
+//                        if (comment.isNullObject) {
+//                            console.warn("No comments in the selection, so no range to get.");
+//                            return;
+//                        }
 
-                      console.log(`Comment location: ${range.text}`);
-                      const contentRange: Word.CommentContentRange = comment.contentRange;
-                      console.log("Comment content range:", contentRange);
+                        console.log(`Comment location: ${range.text}`);
+                        //const contentRange: Word.CommentContentRange = comment.contentRange;
+                        //console.log("Comment content range:", contentRange);
                 });
         }
         
