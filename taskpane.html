@@ -2,167 +2,54 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Text Popup Add-in</title>
-    <style>
-        .popup {
-            position: absolute;
-            background-color: white;
-            border: 1px solid black;
-            padding: 10px;
-            z-index: 1000;
-            width: 150px;
-            display: none;
-        }
-    </style>
+    <title>Get Selected Text Coordinates</title>
     <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
-
 </head>
 <body>
-    <div id="popup" class="popup"></div>
+    <button id="getCoords">Get Selected Text Coordinates</button>
+    <div id="output"></div>
+
     <script>
-        
-        Office.onReady((info) => {
-             console.log("Document ready");
-             sunscribe();
+        Office.onReady(() => {
+            if (Office.context.host === Office.HostType.Word) {
+                document.getElementById("getCoords").onclick = getSelectedTextCoordinates;
+            }
         });
-        
-        
-        
-        function sunscribe() {
-            Office.context.document.addHandlerAsync(Office.EventType.DocumentSelectionChanged, handler);
+
+        async function getSelectedTextCoordinates() {
+            await Word.run(async (context) => {
+                const selection = context.document.getSelection();
+                selection.load("text");
+
+                await context.sync();
+
+                const selectedText = selection.text;
+
+                // Create a hidden span element to measure the text
+                const span = document.createElement("span");
+                span.style.position = "absolute";
+                span.style.visibility = "hidden"; // Hide it
+                span.style.font = window.getComputedStyle(document.body).font; // Match document font
+                span.innerText = selectedText;
+                document.body.appendChild(span);
+
+                const rect = span.getBoundingClientRect(); // Get bounding box
+
+                // Calculate X and Y coordinates
+                const x = rect.left + window.scrollX;
+                const y = rect.top + window.scrollY;
+
+                // Clean up the dummy span
+                document.body.removeChild(span);
+
+                console.log(`Selected Text: "${selectedText}"`);
+                console.log(`X: ${x}, Y: ${y}`);
+
+                document.getElementById("output").innerText = `Selected Text: "${selectedText}", X: ${x}, Y: ${y}`;
+            }).catch((error) => {
+                console.error(error);
+            });
         }
-        function handler() {
-            console.log("****** select");
-            showPopup();
-        }
-        
-//        Office.onReady((info) => {
-//            if (info.host === Office.HostType.Word) {
-//                document.addEventListener('mouseup', showPopup);
-//            }
-//        });
-
-//        function showPopup() {
-//            const selectedText = getSelectedText();
-//            if (selectedText) {
-//                const popup = document.getElementById('popup');
-//                popup.innerText = "You selected: " + selectedText;
-//
-//                const range = window.getSelection().getRangeAt(0);
-//                const rect = range.getBoundingClientRect();
-//
-//                popup.style.left = `${rect.left + window.scrollX}px`;
-//                popup.style.top = `${rect.bottom + window.scrollY}px`;
-//                popup.style.display = 'block';
-//
-//                // Hide popup on click outside
-//                document.addEventListener('click', function hidePopup(e) {
-//                    if (!popup.contains(e.target)) {
-//                        popup.style.display = 'none';
-//                        document.removeEventListener('click', hidePopup);
-//                    }
-//                });
-//            }
-//        }
-        
-//        async function showPopup() {
-//            await Word.run(async (context) => {
-//                const selection = context.document.getSelection();
-//                selection.load('text');
-//                await context.sync();
-//
-//                if (selection.text) {
-////                    const popup = document.getElementById('popup');
-////                    popup.innerText = "You selected: " + selection.text;
-////
-////                    // Calculate the position for the popup
-////                    const range = window.getSelection().getRangeAt(0);
-////                    const rect = range.getBoundingClientRect();
-////
-////                    popup.style.left = `${rect.left + window.scrollX}px`;
-////                    popup.style.top = `${rect.bottom + window.scrollY}px`;
-////                    popup.style.display = 'block';
-//                    
-//                    const popup = document.getElementById('popup');
-//                    popup.innerText = "You selected: " + selection.text;
-//
-//                    // Get the range of the selection
-//                    const range = selection.getRange();
-//                    range.load('start, end');
-//                    await context.sync();
-//
-//                    // Calculate the bounding rectangle for the selected range
-//                    const startRect = range.start.getBoundingClientRect();
-//                    const endRect = range.end.getBoundingClientRect();
-//
-//                    // Position the popup below the selected text
-//                    popup.style.left = `${startRect.left + window.scrollX}px`;
-//                    popup.style.top = `${endRect.bottom + window.scrollY}px`;
-//                    popup.style.display = 'block';
-//
-//
-//                    // Hide popup on click outside
-//                    document.addEventListener('click', function hidePopup(e) {
-//                        if (!popup.contains(e.target)) {
-//                            popup.style.display = 'none';
-//                            document.removeEventListener('click', hidePopup);
-//                        }
-//                    });
-//                }
-//            });
-//        }
-
-//        function getSelectedText() {
-//            return window.getSelection().toString();
-//        }
-        
-        
-        
-         async function showPopup() {
-//            var text = getSelectedText();
-//            console.log("#### : "+text)
-            
-                // Link to full sample: https://raw.githubusercontent.com/OfficeDev/office-js-snippets/prod/samples/word/50-document/manage-comments.yaml
-
-                // Gets the range of the first comment in the selected content.
-                await Word.run(async (context) => {
-//                      const comment: Word.Comment = context.document.getSelection().getComments().getFirstOrNullObject();
-//                      comment.load("contentRange");
-//                      const range: Word.Range = comment.getRange();
-//                      range.load("text");
-//                      await context.sync();
-                    
-                        //const selection = context.document.getSelection();
-                        const selection = context.document.getSelection();
-                    
-                        console.log(" 1## : "+JSON.stringify(selection))
-                    
-                        console.log(" 2## : "+selection)
-                        
-                        selection.load('contentRange');
-                        await context.sync() 
-                    
-                        const range = selection.getRange();
-                        range.load("text");
-                        await context.sync();
-
-//                        if (comment.isNullObject) {
-//                            console.warn("No comments in the selection, so no range to get.");
-//                            return;
-//                        }
-
-                        console.log(`Comment location: ${range.text}`);
-                        //const contentRange: Word.CommentContentRange = comment.contentRange;
-                        //console.log("Comment content range:", contentRange);
-                });
-        }
-        
-        
-
-        
-        const getSelectedText = () => window.getSelection().toString();
-
     </script>
 </body>
 </html>
