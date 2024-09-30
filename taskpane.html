@@ -3,11 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <title>Get Selected Text Coordinates</title>
+    <style>
+        #popup {
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px;
+            border-radius: 5px;
+            display: none; /* Initially hidden */
+        }
+    </style>
     <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
 </head>
 <body>
     <button id="getCoords">Get Selected Text Coordinates</button>
-    <div id="output"></div>
+    <div id="popup"></div>
 
     <script>
         Office.onReady(() => {
@@ -42,13 +52,24 @@
                 // Clean up the dummy span
                 document.body.removeChild(span);
 
-                console.log(`Selected Text: "${selectedText}"`);
-                console.log(`X: ${x}, Y: ${y}`);
-
-                document.getElementById("output").innerText = `Selected Text: "${selectedText}", X: ${x}, Y: ${y}`;
+                // Show popup with coordinates
+                showPopup(selectedText, x, y);
             }).catch((error) => {
                 console.error(error);
             });
+        }
+
+        function showPopup(text, x, y) {
+            const popup = document.getElementById("popup");
+            popup.innerText = `Selected Text: "${text}"\nX: ${x}, Y: ${y}`;
+            popup.style.left = `${x}px`;
+            popup.style.top = `${y}px`;
+            popup.style.display = 'block'; // Show the popup
+
+            // Hide the popup after a few seconds
+            setTimeout(() => {
+                popup.style.display = 'none';
+            }, 3000);
         }
     </script>
 </body>
