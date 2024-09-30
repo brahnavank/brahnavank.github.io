@@ -135,7 +135,7 @@
                     
                         //const selection = context.document.getSelection();
                         const selection = context.document.getSelection();
-                        range.load('contentRange');
+                        selection.load('contentRange');
                         await context.sync() 
                     
                         const range = selection.getRange();
