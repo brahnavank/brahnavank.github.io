@@ -3,59 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Floating Toolbar Example</title>
+    <title>Text Popup Add-in</title>
     <style>
-        #floatingToolbar {
+        .popup {
             position: absolute;
-            display: none;
-            background: white;
-            border: 1px solid #ccc;
+            background-color: white;
+            border: 1px solid black;
             padding: 10px;
-            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
             z-index: 1000;
-            transition: display 0.2s;
+            width: 150px;
+            display: none;
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/office-ui-fabric-js/1.4.1/office-ui-fabric.min.js"></script>
 </head>
 <body>
-    <div id="floatingToolbar">
-        <button onclick="doSomething()">Action</button>
-    </div>
-
-    <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.debug.js"></script>
+    <div id="popup" class="popup"></div>
     <script>
-        Office.onReady(() => {
-            // Add event listener for click
-            document.addEventListener("click", checkSelection);
+        Office.onReady((info) => {
+            if (info.host === Office.HostType.Word) {
+                document.addEventListener('mouseup', showPopup);
+            }
         });
 
-        function checkSelection(event) {
-            Office.context.document.getSelectedDataAsync(Office.CoercionType.Text, (result) => {
-                if (result.status === Office.AsyncResultStatus.Succeeded && result.value) {
-                    showToolbar(event.clientX, event.clientY);
-                } else {
-                    hideToolbar();
-                }
-            });
+        function showPopup() {
+            const selectedText = getSelectedText();
+            if (selectedText) {
+                const popup = document.getElementById('popup');
+                popup.innerText = "You selected: " + selectedText;
+
+                const range = window.getSelection().getRangeAt(0);
+                const rect = range.getBoundingClientRect();
+
+                popup.style.left = `${rect.left + window.scrollX}px`;
+                popup.style.top = `${rect.bottom + window.scrollY}px`;
+                popup.style.display = 'block';
+
+                // Hide popup on click outside
+                document.addEventListener('click', function hidePopup(e) {
+                    if (!popup.contains(e.target)) {
+                        popup.style.display = 'none';
+                        document.removeEventListener('click', hidePopup);
+                    }
+                });
+            }
         }
 
-        function showToolbar(x, y) {
-            const toolbar = document.getElementById("floatingToolbar");
-            toolbar.style.left = `${x}px`;
-            toolbar.style.top = `${y}px`;
-            toolbar.style.display = "block";
-        }
-
-        function hideToolbar() {
-            const toolbar = document.getElementById("floatingToolbar");
-            toolbar.style.display = "none";
-        }
-
-        function doSomething() {
-            // Implement your action here
-            console.log("Button clicked!");
-            // Optionally, you can hide the toolbar after action
-            hideToolbar();
+        function getSelectedText() {
+            return window.getSelection().toString();
         }
     </script>
 </body>
