@@ -43,27 +43,56 @@
 //            }
 //        });
 
-        function showPopup() {
-            const selectedText = getSelectedText();
-            if (selectedText) {
-                const popup = document.getElementById('popup');
-                popup.innerText = "You selected: " + selectedText;
+//        function showPopup() {
+//            const selectedText = getSelectedText();
+//            if (selectedText) {
+//                const popup = document.getElementById('popup');
+//                popup.innerText = "You selected: " + selectedText;
+//
+//                const range = window.getSelection().getRangeAt(0);
+//                const rect = range.getBoundingClientRect();
+//
+//                popup.style.left = `${rect.left + window.scrollX}px`;
+//                popup.style.top = `${rect.bottom + window.scrollY}px`;
+//                popup.style.display = 'block';
+//
+//                // Hide popup on click outside
+//                document.addEventListener('click', function hidePopup(e) {
+//                    if (!popup.contains(e.target)) {
+//                        popup.style.display = 'none';
+//                        document.removeEventListener('click', hidePopup);
+//                    }
+//                });
+//            }
+//        }
+        
+        async function showPopup() {
+            await Word.run(async (context) => {
+                const selection = context.document.getSelection();
+                selection.load('text');
+                await context.sync();
 
-                const range = window.getSelection().getRangeAt(0);
-                const rect = range.getBoundingClientRect();
+                if (selection.text) {
+                    const popup = document.getElementById('popup');
+                    popup.innerText = "You selected: " + selection.text;
 
-                popup.style.left = `${rect.left + window.scrollX}px`;
-                popup.style.top = `${rect.bottom + window.scrollY}px`;
-                popup.style.display = 'block';
+                    // Calculate the position for the popup
+                    const range = window.getSelection().getRangeAt(0);
+                    const rect = range.getBoundingClientRect();
 
-                // Hide popup on click outside
-                document.addEventListener('click', function hidePopup(e) {
-                    if (!popup.contains(e.target)) {
-                        popup.style.display = 'none';
-                        document.removeEventListener('click', hidePopup);
-                    }
-                });
-            }
+                    popup.style.left = `${rect.left + window.scrollX}px`;
+                    popup.style.top = `${rect.bottom + window.scrollY}px`;
+                    popup.style.display = 'block';
+
+                    // Hide popup on click outside
+                    document.addEventListener('click', function hidePopup(e) {
+                        if (!popup.contains(e.target)) {
+                            popup.style.display = 'none';
+                            document.removeEventListener('click', hidePopup);
+                        }
+                    });
+                }
+            });
         }
 
         function getSelectedText() {
