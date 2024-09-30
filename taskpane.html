@@ -53,7 +53,7 @@
                 document.body.removeChild(span);
 
                 // Show popup with coordinates
-                showPopup(selectedText, 10, y);
+                showPopup(selectedText, 1, y);
             }).catch((error) => {
                 console.error(error);
             });
@@ -67,9 +67,9 @@
             popup.style.display = 'block'; // Show the popup
 
             // Hide the popup after a few seconds
-            setTimeout(() => {
-                popup.style.display = 'none';
-            }, 3000);
+//            setTimeout(() => {
+//                popup.style.display = 'none';
+//            }, 3000);
         }
     </script>
 </body>
