@@ -21,11 +21,27 @@
 <body>
     <div id="popup" class="popup"></div>
     <script>
+        
         Office.onReady((info) => {
-            if (info.host === Office.HostType.Word) {
-                document.addEventListener('mouseup', showPopup);
-            }
+             console.log("Document ready");
+             sunscribe();
         });
+        
+        
+        
+        function sunscribe() {
+            Office.context.document.addHandlerAsync(Office.EventType.DocumentSelectionChanged, handler);
+        }
+        function handler() {
+            console.log("****** select");
+            showPopup();
+        }
+        
+//        Office.onReady((info) => {
+//            if (info.host === Office.HostType.Word) {
+//                document.addEventListener('mouseup', showPopup);
+//            }
+//        });
 
         function showPopup() {
             const selectedText = getSelectedText();
